@@ -4,14 +4,14 @@ commands: [{
     args: publish
 }, {
     executable: gradle
-    execution-subdirectory: groovy/consumer
+    execution-subdirectory: ../../groovy/consumer
     args: hello
 }, {
     executable: gradle
-    execution-subdirectory: kotlin/plugin
+    execution-subdirectory: ../../kotlin/plugin
     args: publish
 }, {
     executable: gradle
-    execution-subdirectory: kotlin/consumer
+    execution-subdirectory: ../../kotlin/consumer
     args: hello
 }]
