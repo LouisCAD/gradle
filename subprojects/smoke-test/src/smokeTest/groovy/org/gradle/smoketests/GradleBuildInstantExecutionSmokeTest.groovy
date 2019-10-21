@@ -21,6 +21,8 @@ import org.gradle.testkit.runner.BuildResult
 import org.gradle.util.Requires
 import org.gradle.util.TestPrecondition
 
+import static org.gradle.integtests.fixtures.RepoScriptBlockUtil.createMirrorInitScript
+
 
 @Requires(TestPrecondition.JDK9_OR_LATER)
 class GradleBuildInstantExecutionSmokeTest extends AbstractSmokeTest {
@@ -49,7 +51,9 @@ class GradleBuildInstantExecutionSmokeTest extends AbstractSmokeTest {
     private BuildResult instantRun(String... tasks) {
         def testArgs = [
             "-Dorg.gradle.unsafe.instant-execution=true",
-            "-PbuildSrcCheck=false"
+            "-Djava9Home=${System.getProperty('java9Home')}",
+            "-PbuildSrcCheck=false",
+            "-I", createMirrorInitScript().absolutePath
         ]
         return runner(*(tasks + testArgs)).build()
     }
