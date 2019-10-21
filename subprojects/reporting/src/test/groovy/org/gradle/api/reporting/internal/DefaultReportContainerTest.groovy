@@ -77,7 +77,7 @@ class DefaultReportContainerTest extends Specification {
 
     def "container is immutable"() {
         when:
-        container.add(new SimpleReport("d", Factories.constant("d"), Report.OutputType.FILE, project))
+        container.add(TestUtil.objectFactory().newInstance(SimpleReport.class, "d", Factories.constant("d"), Report.OutputType.FILE, project))
 
         then:
         thrown(ReportContainer.ImmutableViolationException)

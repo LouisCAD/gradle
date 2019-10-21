@@ -23,6 +23,7 @@ import org.gradle.api.Task
 import org.gradle.api.reporting.Report
 import org.gradle.api.tasks.Copy
 import org.gradle.testfixtures.ProjectBuilder
+import org.gradle.util.TestUtil
 import spock.lang.Specification
 
 class TaskGeneratedReportTest extends Specification {
@@ -31,7 +32,7 @@ class TaskGeneratedReportTest extends Specification {
         given:
         Project project = ProjectBuilder.builder().build()
         Task task = project.task("task", type: Copy)
-        TaskGeneratedReport report = new TaskGeneratedReport("report", Report.OutputType.FILE, task) {}
+        TaskGeneratedReport report = TestUtil.objectFactory().newInstance(TaskGeneratedReport.class, "report", Report.OutputType.FILE, task)
         File destinationFile = project.file("foo")
 
         when:
