@@ -47,6 +47,7 @@ configurations {
 dependencies {
     smokeTestImplementation(project(":baseServices"))
     smokeTestImplementation(project(":coreApi"))
+    smokeTestImplementation(project(":persistentCache"))
     smokeTestImplementation(project(":testKit"))
     smokeTestImplementation(project(":internalIntegTesting"))
     smokeTestImplementation(library("commons_io"))
