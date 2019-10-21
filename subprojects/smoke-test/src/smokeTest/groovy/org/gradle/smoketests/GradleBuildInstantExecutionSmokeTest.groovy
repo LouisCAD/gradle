@@ -51,7 +51,7 @@ class GradleBuildInstantExecutionSmokeTest extends AbstractSmokeTest {
     private BuildResult instantRun(String... tasks) {
         def testArgs = [
             "-Dorg.gradle.unsafe.instant-execution=true",
-            "-Djava9Home=${System.getProperty('java9Home')}",
+            "-Djava9Home=${System.getenv('JAVA_11_HOME')}",
             "-PbuildSrcCheck=false",
             "-I", createMirrorInitScript().absolutePath
         ]
