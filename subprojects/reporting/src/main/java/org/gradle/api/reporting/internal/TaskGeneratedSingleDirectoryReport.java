@@ -17,17 +17,41 @@
 package org.gradle.api.reporting.internal;
 
 import org.gradle.api.Task;
+import org.gradle.api.file.DirectoryProperty;
+import org.gradle.api.model.ObjectFactory;
+import org.gradle.api.provider.Property;
 import org.gradle.api.reporting.DirectoryReport;
 
+import javax.inject.Inject;
 import java.io.File;
 
 public class TaskGeneratedSingleDirectoryReport extends TaskGeneratedReport implements DirectoryReport {
 
     private final String relativeEntryPath;
+    // TODO - make this managed properties, once instant execution can deserialize abstract beans
+    private final DirectoryProperty outputLocation;
+    private final Property<Boolean> activated;
 
     public TaskGeneratedSingleDirectoryReport(String name, Task task, String relativeEntryPath) {
         super(name, OutputType.DIRECTORY, task);
         this.relativeEntryPath = relativeEntryPath;
+        this.outputLocation = getObjectFactory().directoryProperty();
+        this.activated = getObjectFactory().property(Boolean.class);
+    }
+
+    @Inject
+    protected ObjectFactory getObjectFactory() {
+        throw new UnsupportedOperationException();
+    }
+
+    @Override
+    public Property<Boolean> getActivated() {
+        return activated;
+    }
+
+    @Override
+    public DirectoryProperty getOutputLocation() {
+        return outputLocation;
     }
 
     @Override

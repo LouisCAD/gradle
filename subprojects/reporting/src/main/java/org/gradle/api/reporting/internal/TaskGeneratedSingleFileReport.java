@@ -17,10 +17,36 @@
 package org.gradle.api.reporting.internal;
 
 import org.gradle.api.Task;
+import org.gradle.api.file.RegularFileProperty;
+import org.gradle.api.model.ObjectFactory;
+import org.gradle.api.provider.Property;
 import org.gradle.api.reporting.SingleFileReport;
 
+import javax.inject.Inject;
+
 public class TaskGeneratedSingleFileReport extends TaskGeneratedReport implements SingleFileReport {
+    // TODO - make this managed properties, once instant execution can deserialize abstract beans
+    private final RegularFileProperty outputLocation;
+    private final Property<Boolean> activated;
+
     public TaskGeneratedSingleFileReport(String name, Task task) {
         super(name, OutputType.FILE, task);
+        this.outputLocation = getObjectFactory().fileProperty();
+        this.activated = getObjectFactory().property(Boolean.class);
+    }
+
+    @Inject
+    protected ObjectFactory getObjectFactory() {
+        throw new UnsupportedOperationException();
+    }
+
+    @Override
+    public Property<Boolean> getActivated() {
+        return activated;
+    }
+
+    @Override
+    public RegularFileProperty getOutputLocation() {
+        return outputLocation;
     }
 }
