@@ -25,6 +25,7 @@ import org.gradle.api.attributes.AttributeCompatibilityRule;
 import org.gradle.api.attributes.AttributeDisambiguationRule;
 import org.gradle.api.attributes.AttributeMatchingStrategy;
 import org.gradle.api.attributes.AttributesSchema;
+import org.gradle.api.attributes.Category;
 import org.gradle.api.attributes.CompatibilityCheckDetails;
 import org.gradle.api.attributes.LibraryElements;
 import org.gradle.api.attributes.HasAttributes;
@@ -45,6 +46,7 @@ public abstract class JavaEcosystemSupport {
         configureLibraryElements(attributesSchema, objectFactory);
         configureBundling(attributesSchema);
         configureTargetPlatform(attributesSchema);
+        configureCategory(attributesSchema, objectFactory);
     }
 
     public static void configureDefaultTargetPlatform(HasAttributes configuration, JavaVersion version) {
@@ -87,6 +89,18 @@ public abstract class JavaEcosystemSupport {
         libraryElementsSchema.getCompatibilityRules().add(LibraryElementsCompatibilityRules.class);
         libraryElementsSchema.getDisambiguationRules().add(LibraryElementsDisambiguationRules.class, actionConfiguration -> {
             actionConfiguration.params(objectFactory.named(LibraryElements.class, LibraryElements.JAR));
+        });
+    }
+
+    private static void configureCategory(AttributesSchema attributesSchema, final ObjectFactory objectFactory) {
+        AttributeMatchingStrategy<Category> categorySchema = attributesSchema.attribute(Category.CATEGORY_ATTRIBUTE);
+        categorySchema.getDisambiguationRules().add(CategoryDisambiguationRules.class, new Action<ActionConfiguration>() {
+            @Override
+            public void execute(ActionConfiguration actionConfiguration) {
+                actionConfiguration.params(objectFactory.named(Category.class, Category.LIBRARY));
+                actionConfiguration.params(objectFactory.named(Category.class, Category.REGULAR_PLATFORM));
+                actionConfiguration.params(objectFactory.named(Category.class, Category.ENFORCED_PLATFORM));
+            }
         });
     }
 
@@ -287,6 +301,35 @@ public abstract class JavaEcosystemSupport {
                             return;
                         }
                     }
+                }
+            }
+        }
+    }
+
+    @VisibleForTesting
+    public static class CategoryDisambiguationRules implements AttributeDisambiguationRule<Category>, ReusableAction {
+        final Category library;
+        final Category platform;
+        final Category enforcedPlatform;
+
+        @Inject
+        CategoryDisambiguationRules(Category library, Category regularPlatform, Category enforcedPlatform) {
+            this.library = library;
+            this.platform = regularPlatform;
+            this.enforcedPlatform = enforcedPlatform;
+        }
+
+        @Override
+        public void execute(MultipleCandidatesDetails<Category> details) {
+            Category consumerValue = details.getConsumerValue();
+            if (consumerValue == null) {
+                Set<Category> candidateValues = details.getCandidateValues();
+                if (candidateValues.contains(library)) {
+                    // default to library
+                    details.closestMatch(library);
+                } else if (candidateValues.contains(platform)) {
+                    // default normal platform when nothing has been requested
+                    details.closestMatch(platform);
                 }
             }
         }

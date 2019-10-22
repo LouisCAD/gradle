@@ -16,48 +16,26 @@
 package org.gradle.api.internal.artifacts.dsl.dependencies;
 
 import com.google.common.base.Objects;
-import com.google.common.collect.ImmutableSet;
 import org.gradle.api.Action;
 import org.gradle.api.attributes.AttributeContainer;
-import org.gradle.api.attributes.AttributeDisambiguationRule;
-import org.gradle.api.attributes.AttributeMatchingStrategy;
-import org.gradle.api.attributes.AttributesSchema;
 import org.gradle.api.attributes.Category;
 import org.gradle.api.attributes.HasConfigurableAttributes;
-import org.gradle.api.attributes.MultipleCandidatesDetails;
-import org.gradle.api.internal.ReusableAction;
 import org.gradle.api.internal.artifacts.repositories.metadata.MavenImmutableAttributesFactory;
 import org.gradle.api.internal.model.NamedObjectInstantiator;
 import org.gradle.internal.component.external.model.ComponentVariant;
 
-import javax.inject.Inject;
-import java.util.Set;
-
 public class PlatformSupport {
     private final Category regularPlatform;
     private final Category enforcedPlatform;
-    private final Set<Category> platformTypes;
 
     public PlatformSupport(NamedObjectInstantiator instantiator) {
         regularPlatform = instantiator.named(Category.class, Category.REGULAR_PLATFORM);
         enforcedPlatform = instantiator.named(Category.class, Category.ENFORCED_PLATFORM);
-        platformTypes = ImmutableSet.of(regularPlatform, enforcedPlatform);
     }
 
-    public boolean isTargettingPlatform(HasConfigurableAttributes<?> target) {
+    public boolean isTargetingPlatform(HasConfigurableAttributes<?> target) {
         Category category = target.getAttributes().getAttribute(Category.CATEGORY_ATTRIBUTE);
         return regularPlatform.equals(category) || enforcedPlatform.equals(category);
-    }
-
-    public void configureSchema(AttributesSchema attributesSchema) {
-        AttributeMatchingStrategy<Category> componentTypeMatchingStrategy = attributesSchema.attribute(Category.CATEGORY_ATTRIBUTE);
-        componentTypeMatchingStrategy.getDisambiguationRules().add(PlatformSupport.ComponentCategoryDisambiguationRule.class);
-    }
-
-    public void addDisambiguationRule(AttributesSchema attributesSchema) {
-        attributesSchema.getMatchingStrategy(Category.CATEGORY_ATTRIBUTE)
-            .getDisambiguationRules()
-            .add(PlatformSupport.PreferRegularPlatform.class, c -> c.params(platformTypes, regularPlatform));
     }
 
     public <T> void addPlatformAttribute(HasConfigurableAttributes<T> dependency, final Category category) {
@@ -79,39 +57,5 @@ public class PlatformSupport {
      */
     public static boolean hasForcedDependencies(ComponentVariant variant) {
         return Objects.equal(variant.getAttributes().getAttribute(MavenImmutableAttributesFactory.CATEGORY_ATTRIBUTE), Category.ENFORCED_PLATFORM);
-    }
-
-    public static class ComponentCategoryDisambiguationRule implements AttributeDisambiguationRule<Category>, ReusableAction {
-        @Override
-        public void execute(MultipleCandidatesDetails<Category> details) {
-            Category consumerValue = details.getConsumerValue();
-            Set<Category> candidateValues = details.getCandidateValues();
-            if (consumerValue == null) {
-                // consumer expressed no preference, defaults to library
-                candidateValues.stream()
-                    .filter(it -> it.getName().equals(Category.LIBRARY))
-                    .findFirst()
-                    .ifPresent(it -> details.closestMatch(it));
-            }
-        }
-
-    }
-
-    public static class PreferRegularPlatform implements AttributeDisambiguationRule<Category> {
-        private final Set<Category> platformTypes;
-        private final Category regularPlatform;
-
-        @Inject
-        public PreferRegularPlatform(Set<Category> platformTypes, Category regularPlatform) {
-            this.platformTypes = platformTypes;
-            this.regularPlatform = regularPlatform;
-        }
-
-        @Override
-        public void execute(MultipleCandidatesDetails<Category> details) {
-            if (details.getCandidateValues().equals(platformTypes)) {
-                details.closestMatch(regularPlatform);
-            }
-        }
     }
 }
