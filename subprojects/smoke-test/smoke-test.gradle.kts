@@ -73,6 +73,10 @@ tasks.register<SmokeTest>("smokeTest") {
     testClassesDirs = smokeTest.output.classesDirs
     classpath = smokeTest.runtimeClasspath
     maxParallelForks = 1 // those tests are pretty expensive, we shouldn"t execute them concurrently
+    systemProperty(
+        "gradleJavaForCompilation",
+        availableJavaInstallations.javaInstallationForCompilation.javaHome
+    )
 }
 
 plugins.withType<IdeaPlugin>().configureEach { // lazy as plugin not applied yet
