@@ -32,7 +32,7 @@ public class TaskGeneratedSingleFileReport extends TaskGeneratedReport implement
     public TaskGeneratedSingleFileReport(String name, Task task) {
         super(name, OutputType.FILE, task);
         this.outputLocation = getObjectFactory().fileProperty();
-        this.activated = getObjectFactory().property(Boolean.class).value(false);
+        this.activated = getObjectFactory().property(Boolean.class).convention(false);
     }
 
     @Inject

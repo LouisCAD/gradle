@@ -36,7 +36,7 @@ public class TaskGeneratedSingleDirectoryReport extends TaskGeneratedReport impl
         super(name, OutputType.DIRECTORY, task);
         this.relativeEntryPath = relativeEntryPath;
         this.outputLocation = getObjectFactory().directoryProperty();
-        this.activated = getObjectFactory().property(Boolean.class).value(false);
+        this.activated = getObjectFactory().property(Boolean.class).convention(false);
     }
 
     @Inject
