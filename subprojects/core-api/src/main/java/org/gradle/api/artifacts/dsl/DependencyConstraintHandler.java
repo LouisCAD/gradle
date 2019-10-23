@@ -16,7 +16,6 @@
 package org.gradle.api.artifacts.dsl;
 
 import org.gradle.api.Action;
-import org.gradle.api.Incubating;
 import org.gradle.api.artifacts.DependencyConstraint;
 
 /**
@@ -57,52 +56,4 @@ public interface DependencyConstraintHandler {
      * @param configureAction The closure to use to configure the dependency.
      */
     DependencyConstraint create(Object dependencyConstraintNotation, Action<? super DependencyConstraint> configureAction);
-
-    /**
-     * Declares a constraint on a platform. If the target coordinates represent multiple
-     * potential components, the platform component will be selected, instead of the library.
-     *
-     * @param notation the coordinates of the platform
-     *
-     * @since 5.0
-     */
-    DependencyConstraint platform(Object notation);
-
-    /**
-     * Declares a constraint on a platform. If the target coordinates represent multiple
-     * potential components, the platform component will be selected, instead of the library.
-     *
-     * @param notation the coordinates of the platform
-     * @param configureAction the dependency configuration block
-     *
-     * @since 5.0
-     */
-    DependencyConstraint platform(Object notation, Action<? super DependencyConstraint> configureAction);
-
-    /**
-     * Declares a constraint on an enforced platform. If the target coordinates represent multiple
-     * potential components, the platform component will be selected, instead of the library.
-     * An enforced platform is a platform for which the direct dependencies are forced, meaning
-     * that they would override any other version found in the graph.
-     *
-     * @param notation the coordinates of the platform
-     *
-     * @since 5.0
-     */
-    @Incubating
-    DependencyConstraint enforcedPlatform(Object notation);
-
-    /**
-     * Declares a constraint on an enforced platform. If the target coordinates represent multiple
-     * potential components, the platform component will be selected, instead of the library.
-     * An enforced platform is a platform for which the direct dependencies are forced, meaning
-     * that they would override any other version found in the graph.
-     *
-     * @param notation the coordinates of the platform
-     * @param configureAction the dependency configuration block
-     *
-     * @since 5.0
-     */
-    @Incubating
-    DependencyConstraint enforcedPlatform(Object notation, Action<? super DependencyConstraint> configureAction);
 }

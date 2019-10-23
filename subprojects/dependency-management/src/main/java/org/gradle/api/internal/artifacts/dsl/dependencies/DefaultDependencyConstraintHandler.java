@@ -73,35 +73,6 @@ public class DefaultDependencyConstraintHandler implements DependencyConstraintH
         return doCreate(dependencyNotation, configureAction);
     }
 
-    @Override
-    public DependencyConstraint platform(Object notation) {
-        DependencyConstraint dependencyConstraint = create(notation);
-        platformSupport.addPlatformAttribute(dependencyConstraint, platform);
-        return dependencyConstraint;
-    }
-
-    @Override
-    public DependencyConstraint platform(Object notation, Action<? super DependencyConstraint> configureAction) {
-        DependencyConstraint dep = platform(notation);
-        configureAction.execute(dep);
-        return dep;
-    }
-
-    @Override
-    public DependencyConstraint enforcedPlatform(Object notation) {
-        DependencyConstraintInternal platformDependency = (DependencyConstraintInternal) create(notation);
-        platformDependency.setForce(true);
-        platformSupport.addPlatformAttribute(platformDependency, enforcedPlatform);
-        return platformDependency;
-    }
-
-    @Override
-    public DependencyConstraint enforcedPlatform(Object notation, Action<? super DependencyConstraint> configureAction) {
-        DependencyConstraint dep = enforcedPlatform(notation);
-        configureAction.execute(dep);
-        return dep;
-    }
-
     private DependencyConstraint doCreate(Object dependencyNotation, @Nullable Action<? super DependencyConstraint> configureAction) {
         DependencyConstraint dependencyConstraint = dependencyFactory.createDependencyConstraint(dependencyNotation);
         if (configureAction != null) {
