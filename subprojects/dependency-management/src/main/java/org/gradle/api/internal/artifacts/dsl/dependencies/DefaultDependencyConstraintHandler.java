@@ -23,7 +23,6 @@ import org.gradle.api.artifacts.ConfigurationContainer;
 import org.gradle.api.artifacts.DependencyConstraint;
 import org.gradle.api.artifacts.dsl.DependencyConstraintHandler;
 import org.gradle.api.attributes.Category;
-import org.gradle.api.internal.artifacts.dependencies.DependencyConstraintInternal;
 import org.gradle.api.internal.model.NamedObjectInstantiator;
 import org.gradle.internal.metaobject.MethodAccess;
 import org.gradle.internal.metaobject.MethodMixIn;

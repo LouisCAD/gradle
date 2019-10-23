@@ -40,6 +40,7 @@ import org.gradle.api.attributes.HasConfigurableAttributes;
 import org.gradle.api.internal.artifacts.VariantTransformRegistry;
 import org.gradle.api.internal.artifacts.query.ArtifactResolutionQueryFactory;
 import org.gradle.api.internal.model.NamedObjectInstantiator;
+import org.gradle.internal.component.external.model.ProjectDerivedCapability;
 import org.gradle.internal.component.external.model.ProjectTestFixtures;
 import org.gradle.internal.Factory;
 import org.gradle.internal.component.external.model.ImmutableCapability;
@@ -265,8 +266,12 @@ public abstract class DefaultDependencyHandler implements DependencyHandler, Met
             ExternalModuleDependency externalModuleDependency = (ExternalModuleDependency) platformDependency;
             DeprecationLogger.whileDisabled(() -> externalModuleDependency.setForce(true));
             platformSupport.addPlatformAttribute(externalModuleDependency, toCategory(Category.ENFORCED_PLATFORM));
-        } else if (platformDependency instanceof HasConfigurableAttributes) {
-            platformSupport.addPlatformAttribute((HasConfigurableAttributes<?>) platformDependency, toCategory(Category.ENFORCED_PLATFORM));
+            externalModuleDependency.capabilities(capabilities -> capabilities.requireCapability(externalModuleDependency.getGroup() + ":" + externalModuleDependency.getName() + "-enforced-platform"));
+        } else if (platformDependency instanceof ProjectDependency) {
+            ProjectDependency projectDependency = (ProjectDependency) platformDependency;
+            platformSupport.addPlatformAttribute(projectDependency, toCategory(Category.ENFORCED_PLATFORM));
+            projectDependency.capabilities(capabilities -> capabilities.requireCapability(
+                new ProjectDerivedCapability(projectDependency.getDependencyProject(), "enforced-platform")));
         }
         return platformDependency;
     }
